@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "857227917392",
+    "project_id": "demofbrestore",
+    "storage_bucket": "demofbrestore.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857227917392:android:4c64293a39d70a9a8ab955",
+        "android_client_info": {
+          "package_name": "net.fpl.demofbrestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857227917392-k877vnhto8phd17ihlp07rk01r0t7ga2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSV-5iVjIMM5vFEt6p-vi2qSkfSnMtK5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857227917392-k877vnhto8phd17ihlp07rk01r0t7ga2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
