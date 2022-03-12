@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnLuu, btnList;
+    Button btnLuu, btnList, btnDelete, btnUpdate;
     EditText edUser, edPass;
     ListView lv;
     AdapterUser adapter;
@@ -36,13 +37,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnLuu = findViewById(R.id.btn_luu);
         btnList = findViewById(R.id.btnlist);
+        btnDelete = findViewById(R.id.btn_xoa);
+        btnUpdate = findViewById(R.id.btn_update);
+
         edUser = findViewById(R.id.ed_user);
         edPass = findViewById(R.id.ed_password);
+
         lv = findViewById(R.id.lv);
         list = new ArrayList<>();
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,9 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     list.clear();
                 }
                 db.collection(User.TB_NAME)
-
                         .get()
-
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -76,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 lv.setAdapter(adapter);
             }
         });
-
         btnLuu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,23 +90,73 @@ public class MainActivity extends AppCompatActivity {
                 user.put(User.NAME_KEY, strName);
                 user.put(User.PASS_KEY, strPass);
 
-                db.collection(User.TB_NAME)
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                db.collection(User.TB_NAME).document((String) user.get(User.NAME_KEY))
+                        .set(user)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("zzzz", "DocumentSnapshot added with ID: " + documentReference.getId());
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getApplicationContext(), "Lưu thành công", Toast.LENGTH_SHORT).show();
+                                Log.d("zzzz", "DocumentSnapshot successfully written!");
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.w("", "Error adding document", e);
+                                Toast.makeText(getApplicationContext(), "Lưu thất bại", Toast.LENGTH_SHORT).show();
+
+                                Log.w("zzzz", "Error writing document", e);
                             }
                         });
 
+
             }
         });
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String strName = edUser.getText().toString();
 
+                db.collection(User.TB_NAME).document(strName).delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(getApplicationContext(), "Đã xóa User: " + strName, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), "Lỗi", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+            }
+        });
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String strName = edUser.getText().toString();
+                String strPass = edPass.getText().toString();
+                Map<String, Object> user = new HashMap<>();
+                user.put(User.PASS_KEY, strPass);
+
+                db.collection(User.TB_NAME).document(strName)
+                        .update(user)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(getApplicationContext(), "Cập nhập thành công", Toast.LENGTH_SHORT).show();
+                                Log.d("zzzz", "onSuccess: Cập nhập thành công");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), "Cập nhập lỗi", Toast.LENGTH_SHORT).show();
+                                Log.d("zzzz", "onSuccess: Cập nhập lỗi");
+                            }
+                        });
+            }
+        });
     }
 }
